@@ -8,6 +8,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --config config/webpack.config.js",
+    "serve:build": "webpack --mode development --progress --colors --inline --config config/webpack.server.config.js --watch",
+    "serve": "npx concurrently \"npm run serve:build\" \"nodemon ./serverDist/bundle.js\"",
     "build": "webpack --config config/webpack.config.js --mode production",
     "build:pubsub": "tsc ./utils/PubSub/index.ts --outDir ./utils/PubSub/dist",
     "build:ws": "tsc ./utils/Ws/index.ts --outDir ./utils/Ws/dist",
@@ -15,11 +17,16 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^4.3.0",
     "ip": "^1.1.5",
+    "nodemon": "^2.0.4",
     "ts-loader": "^7.0.4",
     "typescript": "^3.9.3",
+    "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"

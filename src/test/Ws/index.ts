@@ -1,4 +1,4 @@
-import { Ws } from '@util/Ws/index';
+import { Ws,a } from '@util/Ws/index';
 
 const ws = new Ws({
   reConnectNum: 10,
@@ -27,3 +27,5 @@ ws.on('bbb', ((e: any) => {
 }))
 
 ws.connect('ws://localhost:8085');
+
+console.log(a.c);

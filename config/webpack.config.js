@@ -2,14 +2,17 @@ const path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const ip = require("ip")
+const ip = require("ip");
 module.exports = {
   mode: "development",
   devtool: "inline-source-map",
   entry: "./src/index.ts",
+  target: "web",
   output: {
     path: path.resolve('./', "dist"),
-    filename: "./js/[name]-[hash:16]-bundle.js",
+    filename: "./js/util.js",
+    library: 'library', // 
+    libraryTarget: 'umd', // 使其可用Script引入，AMD,commonjs, ES6 module
   },
   resolve: {
     extensions: [".ts", ".js"],

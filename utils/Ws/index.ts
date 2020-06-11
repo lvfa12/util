@@ -193,15 +193,3 @@ export class Ws extends Publish {
   }
 }
 
-export const a = {
-  get c(){
-    this.a();
-    return 111
-  },
-  a(){
-    console.log(this)
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.innerHTML = "hhhhhh"
-  }
-}

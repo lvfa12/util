@@ -16,7 +16,6 @@ export default class Port {
       });
       server.on('error', () => {
         console.log('error');
-        
         rej(`端口：${port} 已被占用`);
       });
 

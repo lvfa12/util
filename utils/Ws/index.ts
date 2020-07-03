@@ -145,6 +145,7 @@ export class Ws extends Publish {
    * 报错后重连
    */
   private relink() {
+    if (this.reConnectNum === 0) return; // 如果重试次数为0
     this.reConnectNumTimeout = setTimeout(() => {
       if (this._reConnectNum--) {
         this.connect(this._wsURL); // 调用重连

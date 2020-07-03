@@ -17,7 +17,7 @@ export class Publish {
     if (typeof pubName !== 'string') throw new Error('pubName 必须为string类型的参数');
     if (!(callback instanceof Function)) throw new Error('on 方法的第二个参数必须为function');
     this.pushItem("subscribeList", pubName, new Subscribe(pubName, callback, scope));
-    
+
     return this;
   }
   /**
@@ -37,8 +37,9 @@ export class Publish {
    * @description    如果未传callback，那么将所有的pubName全都取消
    * @param pubName  取消订阅的名字
    * @param callback 接收订阅信息的接口
+   * @param scope    作用域
    */
-  public off(pubName: string, callback?: Function) {
+  public off(pubName: string, callback?: Function, scope?: any) {
     if (typeof pubName !== 'string') throw new Error('pubName 必须为string类型的参数');
     // 未传回调函数
     if (callback === void 0 || !(callback instanceof Function)) {
@@ -46,21 +47,21 @@ export class Publish {
       if (this.subscribeList !== null && this.subscribeList.has(pubName)) this.subscribeList.delete(pubName);
       if (this.subscribeOnceList !== null && this.subscribeOnceList.has(pubName)) this.subscribeOnceList.delete(pubName);
     } else {
-      this.removeItem(pubName, callback);
+      this.removeItem(pubName, callback, scope);
     }
     return this;
   }
   /**
    * 触发通知
-   * @param pubName        要通知的订阅名称
-   * @param callbackValue  通知的数据
+   * @param pubName           要通知的订阅名称
+   * @param ...callbackValue  剩余通知的数据
    */
-  public notify(pubName: string, callbackValue: any) {
+  public notify(pubName: string, ...callbackValue: any[]) {
     if (this.subscribeList !== null && this.subscribeList.has(pubName)) {
-      this.subscribeList.get(pubName).forEach(item => item.update(callbackValue));
+      this.subscribeList.get(pubName).forEach(item => item.update(...callbackValue));
     }
     if (this.subscribeOnceList !== null && this.subscribeOnceList.has(pubName)) {
-      this.subscribeOnceList.get(pubName).forEach(item => item.update(callbackValue));
+      this.subscribeOnceList.get(pubName).forEach(item => item.update(...callbackValue));
       this.subscribeOnceList.set(pubName, []);
     }
     return this;
@@ -91,20 +92,38 @@ export class Publish {
    * 删除订阅名为[pubName]回调函数为[callback]的订阅
    * @param pubName  订阅名
    * @param callback 接收订阅信息的接口
+   * @param scope    作用域
    */
-  private removeItem(pubName: string, callback: Function) {
+  private removeItem(pubName: string, callback: Function, scope?: any) {
     let tempList: Array<Subscribe> = null;
     if (this.subscribeList !== null && this.subscribeList.has(pubName)) {
       tempList = this.subscribeList.get(pubName);
-      tempList = tempList.filter(item => !item.equal(callback));
+      tempList = tempList.filter(item => !item.equal(callback, scope));
       this.subscribeList.set(pubName, tempList);
     }
     if (this.subscribeOnceList !== null && this.subscribeOnceList.has(pubName)) {
       tempList = this.subscribeOnceList.get(pubName);
-      tempList = tempList.filter(item => !item.equal(callback));
+      tempList = tempList.filter(item => !item.equal(callback, scope));
       this.subscribeOnceList.set(pubName, tempList);
     }
   }
+  /**
+   * 移除作用域下所有的方法
+   * @param scope 作用域
+   */
+  public offScope(scope: any) {
+    this.subscribeList.forEach((value, key) => {
+      if (value === void 0 || value === null) return this.subscribeList.delete(key);
+      const list = value.filter(item => !item.scopeEqual(scope));
+      this.subscribeList.set(key, list);
+    });
+    this.subscribeOnceList.forEach((value, key) => {
+      if (value === void 0 || value === null) return this.subscribeOnceList.delete(key);
+      const list = value.filter(item => !item.scopeEqual(scope));
+      this.subscribeOnceList.set(key, list);
+    });
+  }
+
 }
 
 export class Subscribe {
@@ -126,14 +145,25 @@ export class Subscribe {
    * 新消息通知
    * @param data 通知的数据
    */
-  public update(data: any) {
-    return this.callback.call(this.scope, data);
+  public update(...data: any[]) {
+    return this.callback.call(this.scope, ...data);
   }
   /**
    * 判断接收订阅信息的接口是否相同
    * @param callback 接收订阅信息的接口
+   * @param scope    如果有传作用域，则会判断接收订阅信息的接口并且判断作用域
    */
-  public equal(callback: Function) {
+  public equal(callback: Function, scope?: any): boolean {
+    if (scope !== void 0) return scope === this.scope && callback === this.callback;
     return callback === this.callback;
   }
+  /**
+   * 判断作用域是否相同
+   * @param scope 作用域， 如果为null 或 undefined，则永远不相等
+   */
+  public scopeEqual(scope: any): boolean {
+    if (scope === null || undefined) return false;
+    return this.scope === scope;
+  }
 }
+

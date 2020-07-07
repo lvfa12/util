@@ -1,4 +1,4 @@
-import { Publish } from '@util/PubSub/index';
+import { Publish } from "../PubSub/index";
 /**
  * 倒计时的执行模式
  * @type MODE_TIME_END   传入结束时间来进行倒计时的模式

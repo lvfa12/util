@@ -8,13 +8,15 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
+    "declaration": false,
     "lib": [
       "es6",
       "dom"
     ],
     "typeRoots": [
       "node_modules/@types",
-      "types"
+      "types",
+      // "dist/index.d.ts"
     ],
     "outDir": "./dist",
     "rootDir": "../",
@@ -30,10 +32,12 @@
   },
   "include": [
     "./**/*.ts",
+    "./utils/**/*.ts",
+    // "./src/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "config"
+    "config",
   ],
 }

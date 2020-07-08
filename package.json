@@ -5,6 +5,7 @@
   "license": "",
   "description": "",
   "main": "./src/index.ts",
+  "types": "./types/index.d.ts",
   "scripts": {
     "dev": "webpack-dev-server --config config/webpack.dev.config.js",
     "serve:build": "webpack --mode development --progress --colors --inline --config config/webpack.server.config.js --watch",

@@ -66,9 +66,9 @@ export class Ws extends Publish {
    * 连接websocket
    * @param url websocket链接
    */
-  public connect(url: string) {
+  public connect(url: string):Ws {
     if (url == void 0) throw new Error("请填写websocket链接");
-    if (this.connectState === WsState['已连接']) return;
+    if (this.connectState === WsState['已连接']) return this;
     this.connectState = WsState['连接中'];
     this._wsURL = url;
     this._ws = new WebSocket(url);
@@ -76,9 +76,11 @@ export class Ws extends Publish {
     this._ws.onclose = this.onclose = this.onclose.bind(this);
     this._ws.onmessage = this.onmessage = this.onmessage.bind(this);
     this._ws.onerror = this.onerror = this.onerror.bind(this);
+    return this;
   }
   /**
    * 在socket开启后调用
+   * @param event websocket 开启事件的event对象
    */
   private onopen(event: Event) {
     this.connectState = WsState['已连接'];
@@ -88,6 +90,7 @@ export class Ws extends Publish {
   }
   /**
    * 在socket关闭后调用
+   *  @param event websocket 关闭事件的event对象
    */
   private onclose(event: CloseEvent) {
     this.connectState = WsState['已断开'];
@@ -96,6 +99,7 @@ export class Ws extends Publish {
   }
   /**
    * 在socket接收到消息后调用
+   * @param message websocket 接收到信息的event对象
    */
   private onmessage(message: MessageEvent) {
     if (typeof message.data === "string") {
@@ -109,6 +113,7 @@ export class Ws extends Publish {
   }
   /**
    * 在socket报错后调用
+   * @param event websocket 报错的event对象
    */
   private onerror(event: Event) {
     this.relink(); // socket

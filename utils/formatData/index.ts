@@ -86,25 +86,38 @@ function formatBoolean(data, format) {
 }
 
 function formatObject(data, format) {
-  if (format.rule === void 0) return format.default;
-  if (!(format.rule instanceof Array)) throw new Error(`rule 错误,rule字段期待一个Array，但传入一个${typeof format.rule}`);
-
-  if (!(data instanceof Object)) {
-    if (Object(format).hasOwnProperty('default')) return format.default;
-    return {};
+  const defExists = Object(format).hasOwnProperty('default');
+  if (format.rule === void 0) {
+    if(defExists) return format.default;
+    return data;
   }
+  if (!(format.rule instanceof Array)) throw new Error(`rule 错误,rule字段期待一个Array，但传入一个${typeof format.rule}`);
+  if (!(data instanceof Object) && defExists) return format.default;
   const obj = {};
   const length = format.rule.length;
   for (let i = 0; i < length; i++) {
     const key = format.rule[i].key;
-    obj[key] = formatData(data[key], format.rule[i]);
+    obj[key] = formatData((data || {})[key], format.rule[i]);
     // console.log(data, key, format.rule[i]);
   }
   return obj
 }
 
 function formatTuple(data, format) {
-  return 6
+  console.log(data, format);
+  const defExists = Object(format).hasOwnProperty('default')
+  // 没有rule字段
+  if (!(format.rule instanceof Array)) {
+    // 有默认值返回默认值
+    if (defExists) return format.default;
+    // 否则返回原始data的值
+    return data;
+  }
+  let arr = [];
+  for (let i = format.rule.length; i--;) {
+    arr[i] = formatData(data[i], format.rule[i]);
+  }
+  return arr
 }
 
 

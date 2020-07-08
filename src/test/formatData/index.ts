@@ -10,13 +10,12 @@ let a = {
     { id: 20, val: "0" },
 
   ],
-  f: {
-    g: void 0,
-    h: null,
-  },
-  g: [
-
-  ]
+  f: null,
+  // {
+  //   g: void 0,
+  //   h: null,
+  // },
+  i: [1, "2", true]
 }
 
 const res = formatData(a, {
@@ -24,7 +23,9 @@ const res = formatData(a, {
     { key: "b", type: "number", default: 0 },
     { key: "c", type: "string", default: "10" },
     {
-      key: "f", type: "object", default: {}, rule: [
+      key: "f",
+      type: "object",
+      rule: [
         { key: "h", type: "boolean", default: "" },
         { key: "g", type: "string" }
       ]
@@ -37,6 +38,14 @@ const res = formatData(a, {
         ]
       }
     },
+    {
+      key: "i", type: "tuple", default: [], rule: [
+        { type: "string" },
+        { type: "number" },
+        { type: "boolean" },
+        { type: 'object' }
+      ]
+    }
   ]
 });
 
